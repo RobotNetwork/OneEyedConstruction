@@ -3,6 +3,12 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+gradle/wrapper
+.idea
+gradlew
+gradlew.bat
+gradle.properties
+build.gradle.kts
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
