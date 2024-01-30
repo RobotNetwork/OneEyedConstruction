@@ -7,7 +7,6 @@ import helpers.Player
 import org.powbot.api.Condition
 import org.powbot.api.Random
 import org.powbot.api.rt4.*
-import org.powbot.api.rt4.stream.item.EquipmentItemStream
 import org.slf4j.LoggerFactory
 
 class RemoveObject(private val config: Config) : Task() {
@@ -50,7 +49,7 @@ class RemoveObject(private val config: Config) : Task() {
 
     private fun equipItemIfNeeded() {
         // equips the user selected item
-        val item = getItemToEquip()
+        val item = playerHelpers.getItemToEquip()
         if (!consHelpers.isMythicalCapeSelected() || (!Inventory.isFull() || !item.valid())) return
 
         if (Game.tab(Game.Tab.INVENTORY) && consHelpers.isBuilt() && Inventory.isFull()) {
@@ -70,23 +69,15 @@ class RemoveObject(private val config: Config) : Task() {
     }
 
     private fun unequipItemIfNeeded() {
-        if (!consHelpers.isMythicalCapeSelected() || getItemToEquip().valid()) return
+        if (!consHelpers.isMythicalCapeSelected() || playerHelpers.getItemToEquip().valid()) return
 
-        val itemToUnequip = getItemToUnequip()
+        val itemToUnequip = playerHelpers.getItemToUnequip()
 
-        if (!getItemToEquip().valid() && Game.tab(Game.Tab.EQUIPMENT) && Condition.wait( { itemToUnequip.viewable().first().valid() }, 300, 6)) {
+        if (!playerHelpers.getItemToEquip().valid() && Game.tab(Game.Tab.EQUIPMENT) && Condition.wait( { itemToUnequip.viewable().first().valid() }, 300, 6)) {
             if (!Inventory.isFull() && itemToUnequip.first().click()) {
                 logger.info("Unequipping ${config.itemToEquip}")
                 Condition.wait( { !itemToUnequip.first().valid() }, 300, 6)
             }
         }
-    }
-
-    private fun getItemToEquip() : Item {
-        return Inventory.stream().name(config.itemToEquip).first()
-    }
-
-    private fun getItemToUnequip() : EquipmentItemStream {
-        return Equipment.stream().name(config.itemToEquip)
     }
 }

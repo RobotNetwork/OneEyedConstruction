@@ -2,13 +2,11 @@ package tasks
 
 import Config
 import Constants.POH_PORTAL_INSIDE
-import Constants.RIMMINGTON_HOUSE_PORTAL
 import Task
 import helpers.ConstructionHelpers
 import helpers.Player
 import org.powbot.api.Condition
 import org.powbot.api.rt4.*
-import org.powbot.api.rt4.stream.item.EquipmentItemStream
 import org.slf4j.LoggerFactory
 
 class LeaveHouse(private val config: Config) : Task() {
@@ -20,7 +18,7 @@ class LeaveHouse(private val config: Config) : Task() {
     override fun shouldExecute(): Boolean {
         return Inventory.isFull()
                 && consHelpers.isBuilt()
-                && getItemToUnequip(config.itemToEquip).first().valid() // item is equipped
+                && playerHelpers.getItemToUnequip().first().valid() // item is equipped
     }
 
     override fun execute() {
@@ -42,16 +40,14 @@ class LeaveHouse(private val config: Config) : Task() {
 
     private fun exit(portal: GameObject) {
         if (portal.inViewport() && portal.interact("Enter")) {
-            Condition.wait { Objects.stream().id(RIMMINGTON_HOUSE_PORTAL).first().valid() }
+            Condition.wait { !portal.valid() }
         }
     }
 
     private fun moveToPortal(portal: GameObject) {
-        Movement.step(portal.tile())
-        Condition.wait( { portal.distance().toInt() < 2 }, 1000, 20)
-    }
-
-    private fun getItemToUnequip(itemName: String?) : EquipmentItemStream {
-        return Equipment.stream().name(itemName)
+        if (portal.distance().toInt() > 7 && portal.valid()) {
+            Movement.step(portal.tile())
+            Condition.wait( { portal.distance().toInt() < 2 }, 1200, 40)
+        }
     }
 }
