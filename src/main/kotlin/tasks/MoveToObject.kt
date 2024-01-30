@@ -46,11 +46,11 @@ class MoveToObject(private val config: Config) : Task() {
 
     private fun walkWhere() : GameObject {
         // identifies where it walks to, the hotspot or the removable object
-        val builtObject = consHelpers.getObjectToRemove()
+        val objectToRemove = consHelpers.getObjectToRemove()
         val hotspotObject = consHelpers.getHotspot()
 
-        if (builtObject.valid()) {
-            return builtObject
+        if (objectToRemove.valid()) {
+            return objectToRemove
         } else if (hotspotObject.valid()) {
             return hotspotObject
         } else {
