@@ -74,7 +74,7 @@ class RemoveObject(private val config: Config) : Task() {
         val itemToUnequip = playerHelpers.getItemToUnequip()
 
         if (!playerHelpers.getItemToEquip().valid() && Game.tab(Game.Tab.EQUIPMENT) && Condition.wait( { itemToUnequip.viewable().first().valid() }, 300, 6)) {
-            if (!Inventory.isFull() && itemToUnequip.first().click()) {
+            if (!Inventory.isFull() && itemToUnequip.first().interact("Remove")) {
                 logger.info("Unequipping ${config.itemToEquip}")
                 Condition.wait( { !itemToUnequip.first().valid() }, 300, 6)
             }
