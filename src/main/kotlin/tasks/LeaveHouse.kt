@@ -2,9 +2,10 @@ package tasks
 
 import Config
 import Constants.POH_PORTAL_INSIDE
-import Constants.REMMINTON_HOUSE_PORTAL
+import Constants.RIMMINGTON_HOUSE_PORTAL
 import Task
 import helpers.ConstructionHelpers
+import helpers.Player
 import org.powbot.api.Condition
 import org.powbot.api.rt4.*
 import org.powbot.api.rt4.stream.item.EquipmentItemStream
@@ -14,6 +15,7 @@ class LeaveHouse(private val config: Config) : Task() {
     private val logger = LoggerFactory.getLogger(this::class.java)
     override var name: String = "Leave house"
     private val consHelpers = ConstructionHelpers(config)
+    private val playerHelpers = Player(config)
 
     override fun shouldExecute(): Boolean {
         return Inventory.isFull()
@@ -25,15 +27,8 @@ class LeaveHouse(private val config: Config) : Task() {
         val exitPortal = Objects.stream().id(POH_PORTAL_INSIDE).first()
         moveToPortal(exitPortal)
         exit(exitPortal)
-        enableRun()
+        playerHelpers.enableRun()
         dropItemIfNeeded()
-    }
-
-    private fun enableRun() {
-        if (!Movement.running() && Movement.running(true)) {
-            logger.info("Enabling run...")
-            Condition.wait({Movement.running()}, 250, 6)
-        }
     }
 
     private fun dropItemIfNeeded() {
@@ -47,7 +42,7 @@ class LeaveHouse(private val config: Config) : Task() {
 
     private fun exit(portal: GameObject) {
         if (portal.inViewport() && portal.interact("Enter")) {
-            Condition.wait { Objects.stream().id(REMMINTON_HOUSE_PORTAL).first().valid() }
+            Condition.wait { Objects.stream().id(RIMMINGTON_HOUSE_PORTAL).first().valid() }
         }
     }
 

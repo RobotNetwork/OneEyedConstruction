@@ -1,8 +1,16 @@
 package tasks
 
 import Config
-import Constants.HOUSE_OPTIONS_WIDGET
-import Constants.SETTINGS_TAB_CONTROL_WIDGET
+import Constants.CALL_SERVANT_WIDGET
+import Constants.CONTROL_SETTINGS_TAB_PARENT
+import Constants.CONTROL_SETTINGS_TAB_COMPONENT_INDEX
+import Constants.FETCH_PLANK
+import Constants.HAS_NONE_LEFT
+import Constants.HOUSE_OPTIONS
+import Constants.NEEDS_MONEY
+import Constants.NO_PLANKS_IN_BANK
+import Constants.NPC_DEMON_BUTLER
+import Constants.WIDGET_INDEX_HOUSE_OPTIONS_OPENED
 import Task
 import org.powbot.api.Condition
 import org.powbot.api.Input
@@ -57,30 +65,26 @@ class Butler(private val config: Config) : Task() {
         if (Chat.getChattingName() == "Demon butler") {
             config.butlerBanking = false
         }
-        // message variants when talking to butler
-        val needsMoney = "Master, if thou desirest my continued service,"
-        val fetchPlank = "Fetch from bank: 25 x ${config.plankType}"
-        val hasNoneLeft = "I have returned with what you asked me to"
-        val noMorePlanksInBank = "My Lord, I cannot conjure items out of the air"
+        val fetchPlank = FETCH_PLANK.replace("[]", config.plankType)
 
         val chatMessage = Chat.getChatMessage()
         if (Chat.chatting()) {
             setButlerTask()
         }
 
-        if (chatMessage.contains(noMorePlanksInBank)) {
+        if (chatMessage.contains(NO_PLANKS_IN_BANK)) {
             Notifications.showNotification("No more planks in the bank!")
             logger.info("No more planks in the bank!")
             ScriptManager.stop()
         }
 
-        if (chatMessage.contains(needsMoney)) {
+        if (chatMessage.contains(NEEDS_MONEY)) {
             logger.info("Butler needs money, paying him")
             Chat.completeChat("Okay, here's 10,000 coins.", "Thanks")
             return
         }
 
-        if ((chatMessage.contains(hasNoneLeft) && findButlerNpc().interact("Talk-to")) || Chat.stream().text(fetchPlank).first().valid()) {
+        if ((chatMessage.contains(HAS_NONE_LEFT) && findButlerNpc().interact("Talk-to")) || Chat.stream().text(fetchPlank).first().valid()) {
             val canSendToBank = Condition.wait({ Chat.chatting() && Chat.stream().text(fetchPlank).first().valid() }, 350, 10)
 
             if (canSendToBank) {
@@ -124,21 +128,21 @@ class Butler(private val config: Config) : Task() {
     }
 
     private fun revealHouseOptionsWidget() {
-        val cog = SETTINGS_TAB_CONTROL_WIDGET
+        val cog = Widgets.component(CONTROL_SETTINGS_TAB_PARENT, CONTROL_SETTINGS_TAB_COMPONENT_INDEX)
         if (cog.actions().contains("Controls") && cog.click()) {
             logger.info("tab not active, clicking tab")
         }
     }
 
     private fun houseOptions(): Component {
-        return HOUSE_OPTIONS_WIDGET
+        return Widgets.component(CONTROL_SETTINGS_TAB_PARENT, HOUSE_OPTIONS)
     }
 
     private fun callServantOption(): Component {
-        return Widgets.component(370, 22)
+        return Widgets.component(WIDGET_INDEX_HOUSE_OPTIONS_OPENED, CALL_SERVANT_WIDGET)
     }
 
     private fun findButlerNpc(): Npc {
-        return Npcs.stream().name("Demon butler").first()
+        return Npcs.stream().name(NPC_DEMON_BUTLER).first()
     }
 }

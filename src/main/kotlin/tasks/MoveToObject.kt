@@ -4,6 +4,7 @@ import Config
 import Constants.POH_DUNGEON_ENTRANCE
 import Task
 import helpers.ConstructionHelpers
+import helpers.Player
 import org.powbot.api.Condition
 import org.powbot.api.rt4.GameObject
 import org.powbot.api.rt4.Movement
@@ -15,6 +16,7 @@ class MoveToObject(private val config: Config) : Task() {
     private val logger = LoggerFactory.getLogger(this::class.java)
     override var name: String = "MoveToObject"
     private val consHelpers = ConstructionHelpers(config)
+    private val playerHelpers = Player(config)
 
     override fun shouldExecute(): Boolean {
         val toGoto = walkWhere()
@@ -23,7 +25,7 @@ class MoveToObject(private val config: Config) : Task() {
     }
 
     override fun execute() {
-        enableRun()
+        playerHelpers.enableRun()
         if (consHelpers.isOakDoorSelected()) {
             enterDungeon()
             return
@@ -62,12 +64,5 @@ class MoveToObject(private val config: Config) : Task() {
         Movement.step(target.tile())
         logger.info("Hotspot we need to build at is further than 7 tiles away, moving player to it.")
         Condition.wait({ target.distance().toInt() < 3 }, 1000, 15)
-    }
-
-    private fun enableRun() {
-        if (!Movement.running() && Movement.running(true)) {
-            logger.info("Enabling run...")
-            Condition.wait({Movement.running()}, 250, 6)
-        }
     }
 }

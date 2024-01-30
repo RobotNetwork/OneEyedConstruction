@@ -3,6 +3,7 @@ package tasks
 import Config
 import Task
 import helpers.ConstructionHelpers
+import helpers.Player
 import org.powbot.api.Condition
 import org.powbot.api.Random
 import org.powbot.api.rt4.*
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory
 class RemoveObject(private val config: Config) : Task() {
     override var name: String = "RemoveObject"
     private val consHelpers = ConstructionHelpers(config)
+    private val playerHelpers = Player(config)
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -22,7 +24,7 @@ class RemoveObject(private val config: Config) : Task() {
 
     override fun execute() {
 //        consHelpers.angleCameraToObject()
-        disableRun()
+        playerHelpers.disableRun()
         equipItemIfNeeded()
         remove()
         unequipItemIfNeeded()
@@ -30,13 +32,6 @@ class RemoveObject(private val config: Config) : Task() {
             // random chance to open/view inventory
             Game.tab(Game.Tab.INVENTORY)
             return
-        }
-    }
-
-    private fun disableRun() {
-        if (Movement.running() && Movement.running(false)) {
-            logger.info("Enabling run...")
-            Condition.wait({!Movement.running()}, 250, 6)
         }
     }
 

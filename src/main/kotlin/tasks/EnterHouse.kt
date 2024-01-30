@@ -1,7 +1,7 @@
 package tasks
 
 import Constants.POH_PORTAL_INSIDE
-import Constants.REMMINTON_HOUSE_PORTAL
+import Constants.RIMMINGTON_HOUSE_PORTAL
 import Task
 import org.powbot.api.Condition
 import org.powbot.api.rt4.Chat
@@ -14,7 +14,7 @@ class EnterHouse : Task() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun shouldExecute(): Boolean {
-        return pohPortal().valid() && pohPortal().inViewport()
+        return pohPortal().inViewport()
     }
 
     override fun execute() {
@@ -40,6 +40,6 @@ class EnterHouse : Task() {
     }
 
     private fun pohPortal() : GameObject {
-        return Objects.stream().id(REMMINTON_HOUSE_PORTAL).first()
+        return Objects.stream().id(RIMMINGTON_HOUSE_PORTAL).first()
     }
 }

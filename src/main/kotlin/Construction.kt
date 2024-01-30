@@ -1,17 +1,9 @@
-import com.google.common.eventbus.Subscribe
-import org.powbot.api.BoundingModel
-import org.powbot.api.Color
 import org.powbot.api.event.InventoryItemActionEvent
-import org.powbot.api.event.RenderEvent
-import org.powbot.api.rt4.Components
 import org.powbot.api.rt4.Game
-import org.powbot.api.rt4.Objects
 import org.powbot.api.rt4.walking.model.Skill
 import org.powbot.api.script.*
 import org.powbot.api.script.paint.PaintBuilder
-import org.powbot.mobile.drawing.Rendering
 import org.powbot.mobile.script.ScriptManager
-import org.powbot.mobile.service.ScriptUploader
 import tasks.*
 
 @ScriptManifest(
@@ -66,10 +58,6 @@ class Construction : AbstractScript() {
         tasks.add(LeaveHouse(config))
     }
 
-    override fun onResume() {
-        ScriptManager.resume()
-    }
-
     private fun buildConfig(toBuild: String, toEquip: String): Config {
         val build = Constants.buildables.first { it.objectName == toBuild }
         return Config(
@@ -83,15 +71,6 @@ class Construction : AbstractScript() {
             planksRemaining = null,
             itemToEquip = toEquip
         )
-    }
-
-    @Subscribe
-    fun onRender(event: RenderEvent) {
-        Rendering.setColor(Color.CYAN)
-    }
-
-    override fun onPause() {
-        ScriptManager.pause()
     }
 
     override fun onStop() {
@@ -109,11 +88,11 @@ class Construction : AbstractScript() {
 }
 
 fun main() {
-    ScriptUploader().uploadAndStart(
-        "OneEyedConstruction",
-        "Main",
-        "emulator-5554",
-        portForward = true,
-    )
-//    ConstructionHelpers().startScript()
+//    ScriptUploader().uploadAndStart(
+//        "OneEyedConstruction",
+//        "Main",
+//        "emulator-5554",
+//        portForward = true,
+//    )
+    Construction().startScript()
 }
