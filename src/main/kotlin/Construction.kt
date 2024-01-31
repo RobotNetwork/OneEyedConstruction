@@ -20,7 +20,7 @@ import tasks.*
             name = "Object to build",
             description = "",
             optionType = OptionType.STRING,
-            allowedValues = ["Oak door", "Oak larder", "Mythical cape", "Teak table", "Mahogany table"],
+            allowedValues = ["Oak door", "Oak larder", "Mythical cape", "Mahogany table"],
             defaultValue = "Mythical cape",
         ),
         ScriptConfiguration(
